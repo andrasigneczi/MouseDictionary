@@ -31,6 +31,9 @@ class AlsXYMouseLabelComponent extends JComponent
 	private ITesseract mITesseract;
 	private DictionaryIF mDictionary;
 	private Font mBubleFont;
+	private boolean mTranslate = false;
+	private Rectangle mTranslatedRectangle = null;
+	private String mTranslatedText = null;
 
 	private class HeightSpaceWidth
 	{
@@ -59,6 +62,8 @@ class AlsXYMouseLabelComponent extends JComponent
 
 		mITesseract = instance;
 		mDictionary = new DemoDictionary();
+		//mDictionary = new GoogleDictionary();
+		mDictionary = new XlsxDictionary();
 
 		HashMap<? extends AttributedCharacterIterator.Attribute,?> fontmap = new HashMap<>();
 		mBubleFont = new Font(Font.SANS_SERIF, Font.BOLD, 16);
@@ -96,12 +101,17 @@ class AlsXYMouseLabelComponent extends JComponent
 			return;
 		//String s = "X:" + rect.getX() + ", Y: " + rect.getY() + ", W:" + rect.getWidth() + ", H:" + rect.getHeight();
 
-		String result = null;
 		try
 		{
-			result = mITesseract.doOCR( mCapture, rect );
+			if( mTranslate )
+			{
+				mTranslatedText = mITesseract.doOCR( mCapture, rect );
+				mTranslatedRectangle = rect;
+				mTranslate = false;
+			}
 			DrawRect( g, rect );
-			DrawBubble( g, result, rect );
+			if( rect.equals( mTranslatedRectangle ) && mTranslatedText != null )
+				DrawBubble( g, mTranslatedText, rect );
 		}
 		catch( TesseractException e )
 		{
@@ -300,5 +310,16 @@ class AlsXYMouseLabelComponent extends JComponent
 				homogenUpperLine[ 0 ],
 				homogenRightLine[0] - homogenLeftLine[0] - homogenLeftLine[1] ,
 				homogenLowerLine[ 0 ] - homogenUpperLine[ 0 ] );
+	}
+
+	public void Translate()
+	{
+		mTranslate = true;
+		repaint();
+	}
+
+	public void ChangeCapturedImage( BufferedImage capture )
+	{
+		mCapture = capture;
 	}
 }

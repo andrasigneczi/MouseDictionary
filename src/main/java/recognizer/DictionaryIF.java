@@ -1,5 +1,8 @@
 package recognizer;
 
+import java.net.MalformedURLException;
+import java.net.URISyntaxException;
+
 /**
  * Created by Andras on 07/11/2016.
  */
