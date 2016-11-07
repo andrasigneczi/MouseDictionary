@@ -1,0 +1,17 @@
+1. Bekapcsolás/Kikapcsolás
+    A tárcán lévő ikon menüjével vagy billentyűzettel
+
+2. Buborék megjelenése
+    Amikor az egér megállás pár tized másodpercre, akkor a program megpróbálja az alatta lévő területet képként
+    felcsípni, és a tess4j szöveggé alakítja. Ha ez megvan, akkor jön a fordító, ami lefordítja magyarra, végül
+    a fordítás megjelenik egy buborékban.
+
+3. Hogy határozom meg, hogy mekkora méretü a kép, amit be kell olvasnom az egér alól?
+   ----------------------------------------------------------------------------------
+    A szövegek különböző karaktermérettel íródnak a képernyőre + a szavak hossza is változó lehet. Erre ki kell találni
+    valamit.
+
+    Egy alternatív megoldás lenne, hogy
+        1) lekérem a képernyő képét,
+        2) megjelenítem pontosan az eredeti helyén úgy hogy észre se lehessen venni a dolgot,
+        3) majd az egeret használva kijelölhetem a nényzetet, mint egy grafikus szerkesztőben.
