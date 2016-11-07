@@ -75,12 +75,16 @@ class AlsXYMouseLabelComponent extends JComponent
 		g.setFont( mBubleFont );
 		Rectangle2D r2d = g.getFontMetrics().getStringBounds( translation, 0, translation.length(), g );
 
+		String[] translationLines = translation.split("\n");
 		g.setColor( Color.lightGray );
 		int y = (int)(rect.getY() + rect.getHeight());
-		g.fill3DRect( mX + 8, y, (int)r2d.getWidth() + 17, (int)r2d.getHeight() + 12, true );
+		g.fill3DRect( mX + 8, y, (int)r2d.getWidth() + 17, translationLines.length * (int)r2d.getHeight() + 12, true );
 		g.setColor( Color.black );
 
-		g.drawString( translation, mX + 16, y + (int)r2d.getHeight() + 3 );
+		//g.drawString( translation, mX + 16, y + (int)r2d.getHeight() + 3 );
+		int LineY = y + 3;
+		for (String line : translationLines)
+			g.drawString(line, mX + 16, LineY += r2d.getHeight());
 	}
 
 	private void DrawRect(Graphics g, Rectangle rect )

@@ -27,7 +27,23 @@ public class XlsxDictionary implements DictionaryIF
 	@Override
 	public String translate( String word )
 	{
-		return mWords.getOrDefault( word.toLowerCase(), "Unknown word: " + word );
+		//return mWords.getOrDefault( word.toLowerCase(), "Unknown word: " + word );
+		String wordLC = word.toLowerCase();
+		if( !mWords.containsKey( wordLC ))
+		{
+
+			for( int i = 2; i < 5 && i < wordLC.length()-2; i++ )
+			{
+				String wordprefix = wordLC.substring( 0, wordLC.length() - i );
+				for( Enumeration<String> e = mWords.keys(); e.hasMoreElements(); )
+				{
+					String key = e.nextElement();
+					if( key.startsWith( wordprefix ))
+						return "Suggestion: " + key + "\n" + mWords.get( key );
+				}
+			}
+		}
+		return "Unknown word: " + word;
 	}
 
 	@Override
