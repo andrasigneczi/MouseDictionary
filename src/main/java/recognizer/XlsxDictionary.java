@@ -39,7 +39,7 @@ public class XlsxDictionary implements DictionaryIF
 				{
 					String key = e.nextElement();
 					if( key.startsWith( wordprefix ))
-						return "Suggestion: " + key + "\n" + mWords.get( key );
+						return "Unknown word: " + word + "\nSimilar: " + key + "\n" + mWords.get( key );
 				}
 			}
 		}
