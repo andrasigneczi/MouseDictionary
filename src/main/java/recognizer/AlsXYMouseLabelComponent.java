@@ -6,18 +6,10 @@ import net.sourceforge.tess4j.TesseractException;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseEvent;
-import java.awt.font.LineMetrics;
-import java.awt.font.TextAttribute;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
-import java.lang.reflect.Array;
 import java.text.AttributedCharacterIterator;
-import java.text.AttributedString;
-import java.text.Format;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 /**
  * This is the class that draws the x/y coordinates
@@ -32,7 +24,7 @@ class AlsXYMouseLabelComponent extends JComponent
 	private Font mBubleFont;
 	private Rectangle mWordBorders = null;
 	private Rectangle mTranslatedRectangle = null;
-	private String mTranslatedText = null;
+	private String mCapturedText = null;
 	private WordDetector mWordDetector = new WordDetector();
 
 	private int mX;
@@ -47,6 +39,7 @@ class AlsXYMouseLabelComponent extends JComponent
 
 	private static boolean mMousePressed  = false;
 	private static Selection mSelectionState = Selection.NONE;
+	private static TextSelectionHandler mTextSelectionHandler = new TextSelectionHandler();
 
 	public AlsXYMouseLabelComponent( BufferedImage capture, ITesseract instance ) {
 		mCapture = capture;
@@ -104,25 +97,49 @@ class AlsXYMouseLabelComponent extends JComponent
 	protected void paintComponent(Graphics g)
 	{
 		super.paintComponent(g);
-		mWordBorders = mWordDetector.DetectWordBorders( mX, mY, mCapture );
+
+		if( mSelectionState == Selection.NONE )
+		{
+			mWordBorders = mWordDetector.DetectWordBorders( mX, mY, mCapture );
+			if( mWordBorders != null )
+				DrawRect( g, mWordBorders );
+		}
+		else
+		{
+			System.out.println( "dbg" );
+			mWordBorders = mTextSelectionHandler.getSelectedBorders( mCapture );
+			if( mWordBorders != null )
+			{
+				System.out.println( "selectedborders: x:" + mWordBorders.getX() + ", y:" + mWordBorders.getY()
+				+ ", width:" + mWordBorders.getWidth() + ", heigth:" + mWordBorders.getHeight());
+
+
+				mTextSelectionHandler.paintSelected( g, mWordBorders, mCapture );
+			}
+		}
+
 		if( mWordBorders != null )
 		{
-			DrawRect( g, mWordBorders );
-			if( mWordBorders.equals( mTranslatedRectangle ) && mTranslatedText != null )
-				DrawBubble( g, mTranslatedText, mWordBorders );
+			if( mWordBorders.equals( mTranslatedRectangle ) && mCapturedText != null )
+				DrawBubble( g, mCapturedText, mWordBorders );
 		}
 	}
 
 	public void Translate()
 	{
+		System.out.println( "translate" );
+		if( mSelectionState == Selection.SELECTED )
+			mWordBorders = mTextSelectionHandler.getSelectedBorders( mCapture );
+
 		if( mWordBorders == null )
 			return;
 		//String s = "X:" + rect.getX() + ", Y: " + rect.getY() + ", W:" + rect.getWidth() + ", H:" + rect.getHeight();
 
 		try
 		{
-			mTranslatedText = mITesseract.doOCR( mCapture, mWordBorders );
+			mCapturedText = mITesseract.doOCR( mCapture, mWordBorders );
 			mTranslatedRectangle = mWordBorders;
+			System.out.println( "mCapturedText:" + mCapturedText );
 		}
 		catch( TesseractException e )
 		{
@@ -152,7 +169,9 @@ class AlsXYMouseLabelComponent extends JComponent
 
 	public void mousePressed(MouseEvent e)
 	{
+		System.out.println( "mousePressed" );
 		mMousePressed  = true;
+		mSelectionState = Selection.NONE;
 	}
 
 	public void mouseReleased(MouseEvent e)
@@ -160,15 +179,34 @@ class AlsXYMouseLabelComponent extends JComponent
 		if( mMousePressed )
 		{
 			mMousePressed = false;
-			mSelectionState = Selection.SELECTED;
+			if( mSelectionState == Selection.STARTED )
+			{
+				mSelectionState = Selection.SELECTED;
+				Translate();
+			}
 		}
+	}
+
+	public void mouseDragged( MouseEvent e )
+	{
+		if( mMousePressed && mSelectionState == Selection.NONE )
+		{
+			mSelectionState = Selection.STARTED;
+			mTextSelectionHandler.selectionStart( mX, mY );
+			mTextSelectionHandler.selectionAdd( e.getX(), e.getY() );
+		}
+		else if( mSelectionState == Selection.STARTED )
+		{
+			mTextSelectionHandler.selectionAdd( e.getX(), e.getY() );
+		}
+
+		mX = e.getX();
+		mY = e.getY();
+		repaint();
 	}
 
 	public void mouseMoved(MouseEvent e)
 	{
-		if( mMousePressed )
-			mSelectionState = Selection.STARTED;
-
 		mX = e.getX();
 		mY = e.getY();
 		repaint();

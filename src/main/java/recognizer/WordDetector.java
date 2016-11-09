@@ -35,6 +35,13 @@ public class WordDetector
 		mHightSpaceWidthRelation.add( new HeightSpaceWidth( 8, 18, 4 ) );
 		mHightSpaceWidthRelation.add( new HeightSpaceWidth( 19, 30, 5 ) );
 	}
+
+	public int[] SearchHomogenHorizontalLine( int x, int y, int direction, BufferedImage capture )
+	{
+		mCapture = capture;
+		return SearchHomogenHorizontalLine( x, y, direction );
+	}
+
 	/**
 	 *
 	 * @param y
@@ -99,6 +106,31 @@ public class WordDetector
 				return true;
 		}
 		return false;
+	}
+
+	public int SearchHomogenXCoord( int x, int y1, int y2, int direction, int xendpos, BufferedImage capture )
+	{
+		for( int xcoord = x; xcoord != xendpos; xcoord += direction )
+		{
+			int height = 0;
+			for( int ycoord = y1; ycoord != y2; ycoord++ )
+			{
+				if( TestPoints( xcoord, y1, xcoord, ycoord ))
+				{
+					height++;
+				}
+				else
+				{
+					break;
+				}
+			}
+
+			if( height == y2 - y1 )
+			{
+				return xcoord;
+			}
+		}
+		return -1;
 	}
 
 	private ArrayList<Integer> SearchHomogenXCoords( int x, int y1, int y2, int direction, int xendpos)

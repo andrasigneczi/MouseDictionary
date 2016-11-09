@@ -100,6 +100,11 @@ public class ScreenshotWindow
 			{
 				alsXYMouseLabel.mouseMoved(me);
 			}
+
+			public void mouseDragged(MouseEvent e)
+			{
+				alsXYMouseLabel.mouseDragged(e);
+			}
 		});
 
 		mFrame.addMouseListener( new MouseAdapter()
