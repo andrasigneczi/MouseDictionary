@@ -25,14 +25,14 @@ public class ScreenshotWindow
 	private static ITesseract instance = null;
 	private static ControlWindow mParent;
 	private static AlsXYMouseLabelComponent alsXYMouseLabel;
-	private static String mActiveDirectory;
+	private static String mActiveDictionary;
 
 	public ScreenshotWindow( ControlWindow p, String activeDirectory )
 	{
 		mParent = p;
 		mFrame = new JFrame("MouseDict");
 		mDialog = new JDialog(mFrame, true);
-		mActiveDirectory = activeDirectory;
+		mActiveDictionary = activeDirectory;
 
 		mContentPane = new JPanel() {
 			@Override
@@ -82,11 +82,12 @@ public class ScreenshotWindow
 		File tessDataFolder = LoadLibs.extractTessResources("tessdata");
 
 		//Set the tessdata path
-		instance.setDatapath(tessDataFolder.getAbsolutePath());
+		//instance.setDatapath(tessDataFolder.getAbsolutePath());
+		instance.setDatapath( "./tessdata" );
 
 		// create an instance of my custom mouse cursor component
 		alsXYMouseLabel = new AlsXYMouseLabelComponent( mCapture, instance );
-		alsXYMouseLabel.setActiveDictionary( mActiveDirectory );
+		alsXYMouseLabel.setActiveDictionary( mActiveDictionary );
 
 		// add my component to the DRAG_LAYER of the layered pane (JLayeredPane)
 		JLayeredPane layeredPane = mFrame.getRootPane().getLayeredPane();
@@ -148,12 +149,12 @@ public class ScreenshotWindow
 		mFrame.setCursor(new Cursor(Cursor.HAND_CURSOR));
 	}
 
-	public void Show( String activeDirectory )
+	public void Show( String activeDictionary )
 	{
-		mActiveDirectory = activeDirectory;
+		mActiveDictionary = activeDictionary;
 		SaveScreen( fileName );
 		alsXYMouseLabel.ChangeCapturedImage( mCapture );
-		alsXYMouseLabel.setActiveDictionary( mActiveDirectory );
+		alsXYMouseLabel.setActiveDictionary( mActiveDictionary );
 		mFrame.setVisible( true );
 	}
 }

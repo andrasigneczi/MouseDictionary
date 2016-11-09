@@ -16,6 +16,39 @@ public class TextSelectionHandler
 
 	public Rectangle getSelectedBorders( BufferedImage capture )
 	{
+		int top, bottom;
+		if( mSelectionY1 < mSelectionY2 )
+		{
+			top    = mSelectionY1;
+			bottom = mSelectionY2;
+		}
+		else
+		{
+			bottom = mSelectionY1;
+			top    = mSelectionY2;
+		}
+
+		int left, right;
+		if( mSelectionX1 > mSelectionX2 )
+		{
+			left = mSelectionX2;
+			right = mSelectionX1;
+		}
+		else
+		{
+			left = mSelectionX1;
+			right = mSelectionX2;
+		}
+
+		return new Rectangle( left,
+				top,
+				right - left,
+				bottom - top );
+	}
+
+	@Deprecated
+	public Rectangle getSelectedBorders_( BufferedImage capture )
+	{
 		WordDetector mWordDetector = new WordDetector();
 		int top, bottom;
 		if( mSelectionY1 < mSelectionY2 )
@@ -77,11 +110,14 @@ public class TextSelectionHandler
 		final int width  = (int)selectedTextBorders.getWidth();
 		final int height = (int)selectedTextBorders.getHeight();
 
+		if( width <= 0 || height <= 0 )
+			return;
+
 		BufferedImage img = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB );
 
-		for( int i = x; i != x + width; i++ )
+		for( int i = x; i != x + width && x < capture.getWidth(); i++ )
 		{
-			for( int j = y; j != y + height; j++ )
+			for( int j = y; j != y + height && y < capture.getHeight(); j++ )
 			{
 				int rgb = capture.getRGB( i, j );
 				img.setRGB( i - x, j - y, rgb ^ 0x00ffff00 );

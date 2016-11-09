@@ -10,6 +10,7 @@ import java.awt.event.MouseEvent;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.text.AttributedCharacterIterator;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
@@ -21,7 +22,7 @@ class AlsXYMouseLabelComponent extends JComponent
 	private BufferedImage mCapture;
 	private ITesseract mITesseract;
 	private DictionaryIF mActiveDictionary;
-	private HashMap<String, DictionaryIF> mDirectories = new HashMap<>();
+	private HashMap<String, DictionaryIF> mDictionaries = new HashMap<>();
 	private Font mBubleFont;
 	private Rectangle mFocusedWordBorders = null;
 	private Rectangle mSelectedCharactersBorders = null;
@@ -68,7 +69,23 @@ class AlsXYMouseLabelComponent extends JComponent
 		//Rectangle2D r2d = g.getFontMetrics().getStringBounds( translation, 0, translation.length(), g );
 
 		String[] translationLines = translation.split("\n");
+		ArrayList<String> brokenLines = new ArrayList<>();
 		for (String line : translationLines)
+		{
+			if( line.length() > 40 )
+			{
+				int lPos = line.indexOf( " ", 40 );
+				while( lPos != -1 )
+				{
+					brokenLines.add( line.substring( 0, lPos ) );
+					line = line.substring( lPos );
+					lPos = line.indexOf( " ", 40 );
+				}
+			}
+			brokenLines.add( line.trim() );
+		}
+
+		for (String line : brokenLines)
 		{
 			Rectangle2D r2d = g.getFontMetrics().getStringBounds( line, 0, line.length(), g );
 			if( r2d.getHeight() > lHeight )
@@ -78,12 +95,12 @@ class AlsXYMouseLabelComponent extends JComponent
 		}
 		g.setColor( Color.orange );
 		int y = (int)(rect.getY() + rect.getHeight());
-		g.fill3DRect( mX + 8, y, lWidth + 17, translationLines.length * lHeight + 12, true );
+		g.fill3DRect( mX + 8, y, lWidth + 17, brokenLines.size() * lHeight + 12, true );
 		g.setColor( Color.black );
 
 		//g.drawString( translation, mX + 16, y + (int)r2d.getHeight() + 3 );
 		int LineY = y + 3;
-		for (String line : translationLines)
+		for (String line : brokenLines)
 			g.drawString(line, mX + 16, LineY += lHeight);
 	}
 
@@ -153,7 +170,6 @@ class AlsXYMouseLabelComponent extends JComponent
 			BufferedImage grayImage = ImageHelper.convertImageToGrayscale(image);
 			mCapturedText = mITesseract.doOCR( grayImage );
 			mTranslatedRectangle = rect;
-			System.out.println( "mCapturedText:" + mCapturedText );
 		}
 		catch( TesseractException e )
 		{
@@ -163,7 +179,6 @@ class AlsXYMouseLabelComponent extends JComponent
 
 	public void Translate()
 	{
-		System.out.println( "translate" );
 		if( mSelectionState == Selection.SELECTED )
 		{
 			mSelectedCharactersBorders = mTextSelectionHandler.getSelectedBorders( mCapture );
@@ -184,19 +199,22 @@ class AlsXYMouseLabelComponent extends JComponent
 	public void ChangeCapturedImage( BufferedImage capture )
 	{
 		mCapture = capture;
+		mFocusedWordBorders = null;
+		mSelectedCharactersBorders = null;
+		mSelectionState = Selection.NONE;
 	}
 
 	public void setActiveDictionary( String activeDictionary )
 	{
-		if( !mDirectories.containsKey( activeDictionary ))
+		if( !mDictionaries.containsKey( activeDictionary ))
 		{
 			String[] langs = activeDictionary.split( "-" );
 			mActiveDictionary = new GoogleDictionary( langs[0], langs[1] );
-			mDirectories.put( activeDictionary, mActiveDictionary );
+			mDictionaries.put( activeDictionary, mActiveDictionary );
 		}
 		else
 		{
-			mActiveDictionary = mDirectories.get( activeDictionary );
+			mActiveDictionary = mDictionaries.get( activeDictionary );
 		}
 	}
 
