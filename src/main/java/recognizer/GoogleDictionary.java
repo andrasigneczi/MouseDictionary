@@ -148,10 +148,19 @@ public class GoogleDictionary implements DictionaryIF
 		return lReturnValue;
 	}
 
+	private String Trim( String word )
+	{
+		while( word.endsWith( "," ) || word.endsWith( ":" ) )
+		{
+			word = word.substring( 0, word.length() - 1 );
+		}
+		return word;
+	}
+
 	@Override
 	public String translate( String word )
 	{
-		word = word.toLowerCase();
+		word = Trim( word.toLowerCase().trim());
 
 		//if(true) return translate3(word);
 
@@ -202,5 +211,11 @@ public class GoogleDictionary implements DictionaryIF
 	public void loadDictionary( String langToLang )
 	{
 
+	}
+
+	@Override
+	public String getSourceLanguage()
+	{
+		return mSourceLanguage;
 	}
 }

@@ -12,4 +12,5 @@ public interface DictionaryIF
 	void modify( String key, String value );
 	void delete( String key );
 	void loadDictionary( String langToLang );
+	String getSourceLanguage();
 }

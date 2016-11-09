@@ -1,4 +1,4 @@
-1. Bekapcsolás/Kikapcsolás
+﻿1. Bekapcsolás/Kikapcsolás
     A tárcán lévő ikon menüjével vagy billentyűzettel
 
 2. Buborék megjelenése
@@ -15,3 +15,9 @@
         1) lekérem a képernyő képét,
         2) megjelenítem pontosan az eredeti helyén úgy hogy észre se lehessen venni a dolgot,
         3) majd az egeret használva kijelölhetem a nényzetet, mint egy grafikus szerkesztőben.
+
+
+
+
+https://github.com/tesseract-ocr/tessdata
+c:\Users\Andras\AppData\Local\Temp\tess4j\tessdata 

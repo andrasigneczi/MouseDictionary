@@ -20,6 +20,7 @@ public class ControlWindow
 	private static JButton gerbgButton;
 	private static JButton frbgButton;
 	private static JButton bghuButton;
+	private static JButton rushuButton;
 	private static ScreenshotWindow mSceenshotWindow = null;
 
 	public ControlWindow()
@@ -57,14 +58,23 @@ public class ControlWindow
 		mContentPane.add( frhunButton );
 
 
-//		bghuButton = new JButton("Bulgarian => Hungarian");
-//		bghuButton.addActionListener( new ActionListener() {
-//			@Override
-//			public void actionPerformed(ActionEvent e) {
-//				_ActionPerformed( e, "bg-hu" );
-//			}
-//		});
-//		mContentPane.add( bghuButton );
+		bghuButton = new JButton("Bulgarian => Hungarian");
+		bghuButton.addActionListener( new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				_ActionPerformed( e, "bg-hu" );
+			}
+		});
+		mContentPane.add( bghuButton );
+
+		rushuButton = new JButton("Russian => Hungarian");
+		rushuButton.addActionListener( new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				_ActionPerformed( e, "bg-hu" );
+			}
+		});
+		mContentPane.add( rushuButton );
 
 
 		enbgButton = new JButton("English => Bulgarian");

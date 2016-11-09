@@ -1,11 +1,5 @@
 package recognizer;
 
-import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
-import org.apache.poi.openxml4j.opc.OPCPackage;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.xssf.usermodel.XSSFSheet;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.jxls.reader.ReaderBuilder;
 import org.jxls.reader.XLSReader;
 
@@ -85,10 +79,10 @@ public class XlsxDictionary implements DictionaryIF
 	{
 		try
 		{
-			List<Translation> translations = parseExcelFileToBeans(new File("a.xlsx"),
+			List<recognizer.Translation> translations = parseExcelFileToBeans(new File("a.xlsx"),
 					new File("dict_xlsx_config.xml"));
 
-			for( Translation t : translations )
+			for( recognizer.Translation t : translations )
 			{
 				if( t.getFrom().equals( "angol"))
 				{
@@ -110,5 +104,11 @@ public class XlsxDictionary implements DictionaryIF
 		{
 			e.printStackTrace();
 		}
+	}
+
+	@Override
+	public String getSourceLanguage()
+	{
+		return "eng";
 	}
 }

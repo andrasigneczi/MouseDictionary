@@ -62,4 +62,10 @@ public class DemoDictionary implements DictionaryIF
 	{
 
 	}
+
+	@Override
+	public String getSourceLanguage()
+	{
+		return "eng";
+	}
 }

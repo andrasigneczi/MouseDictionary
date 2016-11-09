@@ -2,6 +2,7 @@ package recognizer;
 
 import net.sourceforge.tess4j.ITesseract;
 import net.sourceforge.tess4j.TesseractException;
+import net.sourceforge.tess4j.util.ImageHelper;
 
 import javax.swing.*;
 import java.awt.*;
@@ -22,7 +23,8 @@ class AlsXYMouseLabelComponent extends JComponent
 	private DictionaryIF mActiveDictionary;
 	private HashMap<String, DictionaryIF> mDirectories = new HashMap<>();
 	private Font mBubleFont;
-	private Rectangle mWordBorders = null;
+	private Rectangle mFocusedWordBorders = null;
+	private Rectangle mSelectedCharactersBorders = null;
 	private Rectangle mTranslatedRectangle = null;
 	private String mCapturedText = null;
 	private WordDetector mWordDetector = new WordDetector();
@@ -98,30 +100,64 @@ class AlsXYMouseLabelComponent extends JComponent
 	{
 		super.paintComponent(g);
 
-		if( mSelectionState == Selection.NONE )
+		mFocusedWordBorders = mWordDetector.DetectWordBorders( mX, mY, mCapture );
+		if( mFocusedWordBorders != null )
+			DrawRect( g, mFocusedWordBorders );
+
+		if( mSelectionState != Selection.NONE )
 		{
-			mWordBorders = mWordDetector.DetectWordBorders( mX, mY, mCapture );
-			if( mWordBorders != null )
-				DrawRect( g, mWordBorders );
+			mSelectedCharactersBorders = mTextSelectionHandler.getSelectedBorders( mCapture );
+			if( mSelectedCharactersBorders != null )
+			{
+				mTextSelectionHandler.paintSelected( g, mSelectedCharactersBorders, mCapture );
+
+				if( mSelectedCharactersBorders.equals( mTranslatedRectangle ) && mCapturedText != null )
+					DrawBubble( g, mCapturedText, mSelectedCharactersBorders );
+			}
 		}
 		else
 		{
-			System.out.println( "dbg" );
-			mWordBorders = mTextSelectionHandler.getSelectedBorders( mCapture );
-			if( mWordBorders != null )
+			if( mFocusedWordBorders != null )
 			{
-				System.out.println( "selectedborders: x:" + mWordBorders.getX() + ", y:" + mWordBorders.getY()
-				+ ", width:" + mWordBorders.getWidth() + ", heigth:" + mWordBorders.getHeight());
-
-
-				mTextSelectionHandler.paintSelected( g, mWordBorders, mCapture );
+				if( mFocusedWordBorders.equals( mTranslatedRectangle ) && mCapturedText != null )
+					DrawBubble( g, mCapturedText, mFocusedWordBorders );
 			}
 		}
+	}
 
-		if( mWordBorders != null )
+	private void Capture( Rectangle rect )
+	{
+		try
 		{
-			if( mWordBorders.equals( mTranslatedRectangle ) && mCapturedText != null )
-				DrawBubble( g, mCapturedText, mWordBorders );
+			if( mActiveDictionary != null )
+			{
+				String lang = mActiveDictionary.getSourceLanguage();
+				if( lang.equalsIgnoreCase( "en" ))
+					mITesseract.setLanguage( "eng" );
+				else if( lang.equalsIgnoreCase( "hu" ))
+					mITesseract.setLanguage( "hun" );
+				if( lang.equalsIgnoreCase( "fr" ))
+					mITesseract.setLanguage( "fra" );
+				if( lang.equalsIgnoreCase( "de" ))
+					mITesseract.setLanguage( "deu" );
+				if( lang.equalsIgnoreCase( "bg" ))
+					mITesseract.setLanguage( "bul" );
+				if( lang.equalsIgnoreCase( "ru" ))
+					mITesseract.setLanguage( "rus" );
+			}
+
+			BufferedImage image = mCapture.getSubimage(
+					(int)rect.getX(), (int)rect.getY(),
+					(int)rect.getWidth(), (int)rect.getHeight());
+
+			BufferedImage grayImage = ImageHelper.convertImageToGrayscale(image);
+			mCapturedText = mITesseract.doOCR( grayImage );
+			mTranslatedRectangle = rect;
+			System.out.println( "mCapturedText:" + mCapturedText );
+		}
+		catch( TesseractException e )
+		{
+			e.printStackTrace();
 		}
 	}
 
@@ -129,22 +165,19 @@ class AlsXYMouseLabelComponent extends JComponent
 	{
 		System.out.println( "translate" );
 		if( mSelectionState == Selection.SELECTED )
-			mWordBorders = mTextSelectionHandler.getSelectedBorders( mCapture );
-
-		if( mWordBorders == null )
-			return;
-		//String s = "X:" + rect.getX() + ", Y: " + rect.getY() + ", W:" + rect.getWidth() + ", H:" + rect.getHeight();
-
-		try
 		{
-			mCapturedText = mITesseract.doOCR( mCapture, mWordBorders );
-			mTranslatedRectangle = mWordBorders;
-			System.out.println( "mCapturedText:" + mCapturedText );
+			mSelectedCharactersBorders = mTextSelectionHandler.getSelectedBorders( mCapture );
+			if( mSelectedCharactersBorders == null )
+				return;
+			Capture( mSelectedCharactersBorders );
 		}
-		catch( TesseractException e )
+		else
 		{
-			e.printStackTrace();
+			if( mFocusedWordBorders == null )
+				return;
+			Capture( mFocusedWordBorders );
 		}
+
 		repaint();
 	}
 
@@ -169,7 +202,6 @@ class AlsXYMouseLabelComponent extends JComponent
 
 	public void mousePressed(MouseEvent e)
 	{
-		System.out.println( "mousePressed" );
 		mMousePressed  = true;
 		mSelectionState = Selection.NONE;
 	}

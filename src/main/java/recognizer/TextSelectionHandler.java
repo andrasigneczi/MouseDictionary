@@ -17,8 +17,20 @@ public class TextSelectionHandler
 	public Rectangle getSelectedBorders( BufferedImage capture )
 	{
 		WordDetector mWordDetector = new WordDetector();
-		int[] homogenUpperLine = mWordDetector.SearchHomogenHorizontalLine( mSelectionX1, mSelectionY1, -1, capture );
-		int[] homogenLowerLine = mWordDetector.SearchHomogenHorizontalLine( mSelectionX1, mSelectionY1,  1, capture );
+		int top, bottom;
+		if( mSelectionY1 < mSelectionY2 )
+		{
+			top    = mSelectionY1;
+			bottom = mSelectionY2;
+		}
+		else
+		{
+			bottom = mSelectionY1;
+			top    = mSelectionY2;
+		}
+
+		int[] homogenUpperLine = mWordDetector.SearchHomogenHorizontalLine( mSelectionX1, top, -1, capture );
+		int[] homogenLowerLine = mWordDetector.SearchHomogenHorizontalLine( mSelectionX1, bottom,  1, capture );
 
 		if( homogenLowerLine[0] - homogenUpperLine[0] < 8 )
 			return null;
