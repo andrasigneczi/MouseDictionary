@@ -26,7 +26,8 @@ class AlsXYMouseLabelComponent extends JComponent
 {
 	private BufferedImage mCapture;
 	private ITesseract mITesseract;
-	private DictionaryIF mDictionary;
+	private DictionaryIF mActiveDictionary;
+	private HashMap<String, DictionaryIF> mDirectories = new HashMap<>();
 	private Font mBubleFont;
 	private boolean mTranslate = false;
 	private Rectangle mTranslatedRectangle = null;
@@ -41,9 +42,9 @@ class AlsXYMouseLabelComponent extends JComponent
 		this.setBackground(Color.blue);
 
 		mITesseract = instance;
-		mDictionary = new DemoDictionary();
+		//mDictionary = new DemoDictionary();
 		//mDictionary = new GoogleDictionary();
-		mDictionary = new XlsxDictionary();
+		//mDictionary = new XlsxDictionary();
 
 		HashMap<? extends AttributedCharacterIterator.Attribute,?> fontmap = new HashMap<>();
 		mBubleFont = new Font("Verdana", Font.BOLD, 16);
@@ -53,7 +54,7 @@ class AlsXYMouseLabelComponent extends JComponent
 
 	private void DrawBubble( Graphics g, String word, Rectangle rect )
 	{
-		String translation = mDictionary.translate( word.trim());
+		String translation = mActiveDictionary.translate( word.trim());
 		g.setFont( mBubleFont );
 		int lWidth = 0;
 		int lHeight = 0;
@@ -125,5 +126,19 @@ class AlsXYMouseLabelComponent extends JComponent
 	public void ChangeCapturedImage( BufferedImage capture )
 	{
 		mCapture = capture;
+	}
+
+	public void setActiveDictionary( String activeDictionary )
+	{
+		if( !mDirectories.containsKey( activeDictionary ))
+		{
+			String[] langs = activeDictionary.split( "-" );
+			mActiveDictionary = new GoogleDictionary( langs[0], langs[1] );
+			mDirectories.put( activeDictionary, mActiveDictionary );
+		}
+		else
+		{
+			mActiveDictionary = mDirectories.get( activeDictionary );
+		}
 	}
 }

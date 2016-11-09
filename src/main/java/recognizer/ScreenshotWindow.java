@@ -25,12 +25,15 @@ public class ScreenshotWindow
 	private static ITesseract instance = null;
 	private static ControlWindow mParent;
 	private static AlsXYMouseLabelComponent alsXYMouseLabel;
+	private static String mActiveDirectory;
 
-	public ScreenshotWindow( ControlWindow p )
+	public ScreenshotWindow( ControlWindow p, String activeDirectory )
 	{
 		mParent = p;
 		mFrame = new JFrame("MouseDict");
 		mDialog = new JDialog(mFrame, true);
+		mActiveDirectory = activeDirectory;
+
 		mContentPane = new JPanel() {
 			@Override
 			protected void paintComponent(Graphics g) {
@@ -83,6 +86,7 @@ public class ScreenshotWindow
 
 		// create an instance of my custom mouse cursor component
 		alsXYMouseLabel = new AlsXYMouseLabelComponent( mCapture, instance );
+		alsXYMouseLabel.setActiveDictionary( mActiveDirectory );
 
 		// add my component to the DRAG_LAYER of the layered pane (JLayeredPane)
 		JLayeredPane layeredPane = mFrame.getRootPane().getLayeredPane();
@@ -129,10 +133,12 @@ public class ScreenshotWindow
 		mFrame.setCursor(new Cursor(Cursor.HAND_CURSOR));
 	}
 
-	public void Show()
+	public void Show( String activeDirectory )
 	{
+		mActiveDirectory = activeDirectory;
 		SaveScreen( fileName );
 		alsXYMouseLabel.ChangeCapturedImage( mCapture );
+		alsXYMouseLabel.setActiveDictionary( mActiveDirectory );
 		mFrame.setVisible( true );
 	}
 }
