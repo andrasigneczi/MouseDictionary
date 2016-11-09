@@ -98,9 +98,7 @@ public class ScreenshotWindow
 		mFrame.addMouseMotionListener(new MouseMotionAdapter() {
 			public void mouseMoved(MouseEvent me)
 			{
-				alsXYMouseLabel.mX = me.getX();
-				alsXYMouseLabel.mY = me.getY();
-				alsXYMouseLabel.repaint();
+				alsXYMouseLabel.mouseMoved(me);
 			}
 		});
 
@@ -111,6 +109,18 @@ public class ScreenshotWindow
 			{
 				//super.mouseClicked( e );
 				alsXYMouseLabel.Translate();
+			}
+
+			@Override
+			public void mousePressed(MouseEvent e)
+			{
+				alsXYMouseLabel.mousePressed( e );
+			}
+
+			@Override
+			public void mouseReleased(MouseEvent e)
+			{
+				alsXYMouseLabel.mouseReleased( e );
 			}
 		} );
 		mFrame.addKeyListener( new KeyAdapter()
