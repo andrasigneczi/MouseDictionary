@@ -9,6 +9,7 @@ import com.google.api.services.translate.TranslateRequestInitializer;
 import com.google.cloud.translate.Translate;
 import com.google.cloud.translate.TranslateOptions;
 import com.google.common.collect.ImmutableList;
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.json.JSONException;
 import org.json.JSONTokener;
 
@@ -185,7 +186,7 @@ public class GoogleDictionary implements DictionaryIF
 					com.google.cloud.translate.Translate.TranslateOption.targetLanguage(mTargetLanguage)
 			);
 
-			mWords.put( word, translation.getTranslatedText());
+			mWords.put( word, StringEscapeUtils.unescapeHtml4( translation.getTranslatedText()));
 			return translation.getTranslatedText();
 		}
 		catch( Exception e )

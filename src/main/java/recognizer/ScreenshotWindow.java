@@ -21,7 +21,7 @@ public class ScreenshotWindow
 	private static JFrame mFrame;
 	private static JDialog mDialog;
 	private static BufferedImage mCapture = null;
-	private static final String fileName = "c:\\temp\\screenshot.bmp";
+	//private static final String fileName = "c:\\temp\\screenshot.bmp";
 	private static ITesseract instance = null;
 	private static ControlWindow mParent;
 	private static AlsXYMouseLabelComponent alsXYMouseLabel;
@@ -46,7 +46,7 @@ public class ScreenshotWindow
 
 		};
 
-		SaveScreen( fileName );
+		SaveScreen();
 
 		mFrame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 		mFrame.add(mContentPane, BorderLayout.CENTER);
@@ -58,19 +58,15 @@ public class ScreenshotWindow
 		InitBubble();
 	}
 
-	private static void SaveScreen( String fileName )
+	private static void SaveScreen()
 	{
 		Rectangle screenRect = new Rectangle(Toolkit.getDefaultToolkit().getScreenSize());
 		try
 		{
 			mCapture = new Robot().createScreenCapture(screenRect);
-			ImageIO.write(mCapture, "bmp", new File( fileName ));
+			//ImageIO.write(mCapture, "bmp", new File( fileName ));
 		}
 		catch( AWTException e )
-		{
-			e.printStackTrace();
-		}
-		catch( IOException e )
 		{
 			e.printStackTrace();
 		}
@@ -152,7 +148,7 @@ public class ScreenshotWindow
 	public void Show( String activeDictionary )
 	{
 		mActiveDictionary = activeDictionary;
-		SaveScreen( fileName );
+		SaveScreen();
 		alsXYMouseLabel.ChangeCapturedImage( mCapture );
 		alsXYMouseLabel.setActiveDictionary( mActiveDictionary );
 		mFrame.setVisible( true );
