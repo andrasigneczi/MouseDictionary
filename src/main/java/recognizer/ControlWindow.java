@@ -133,4 +133,10 @@ public class ControlWindow
 	{
 		mFrame.setVisible( true );
 	}
+
+	public void ActivateLastDictionary()
+	{
+		if( mSceenshotWindow != null )
+			mSceenshotWindow.ActivateLastDictionary();
+	}
 }

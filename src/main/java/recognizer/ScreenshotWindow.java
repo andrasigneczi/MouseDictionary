@@ -153,4 +153,14 @@ public class ScreenshotWindow
 		alsXYMouseLabel.setActiveDictionary( mActiveDictionary );
 		mFrame.setVisible( true );
 	}
+
+	public void ActivateLastDictionary()
+	{
+		SaveScreen();
+		alsXYMouseLabel.ChangeCapturedImage( mCapture );
+		alsXYMouseLabel.setActiveDictionary( mActiveDictionary );
+		mFrame.setVisible( true );
+		mFrame.toFront();
+		mFrame.repaint();
+	}
 }
