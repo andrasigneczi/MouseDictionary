@@ -149,11 +149,11 @@ public class ScreenshotWindow
 			@Override
 			public void keyPressed( KeyEvent e )
 			{
+				mLastHidingOperation = LastHidingOperation.SUSPENDED;
+				hideWindow();
 				//super.keyTyped( e );
 				if( e.getKeyCode() == KeyEvent.VK_ESCAPE )
 				{
-					mLastHidingOperation = LastHidingOperation.CLOSED;
-					hideWindow();
 					mParent.ScreenshotClosed();
 				}
 			}
