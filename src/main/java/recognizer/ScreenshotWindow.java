@@ -4,13 +4,11 @@ import net.sourceforge.tess4j.ITesseract;
 import net.sourceforge.tess4j.Tesseract1;
 import net.sourceforge.tess4j.util.LoadLibs;
 
-import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.IOException;
 
 /**
  * Created by Andras on 07/11/2016.
@@ -26,6 +24,15 @@ public class ScreenshotWindow
 	private static ControlWindow mParent;
 	private static AlsXYMouseLabelComponent alsXYMouseLabel;
 	private static String mActiveDictionary;
+
+	enum LastHidingOperation
+	{
+		CLOSED,
+		SUSPENDED,
+		NOTHING
+	};
+
+	private static LastHidingOperation mLastHidingOperation = LastHidingOperation.CLOSED;
 
 	public ScreenshotWindow( ControlWindow p, String activeDirectory )
 	{
@@ -125,6 +132,17 @@ public class ScreenshotWindow
 				alsXYMouseLabel.mouseReleased( e );
 			}
 		} );
+
+		mFrame.addMouseWheelListener( new MouseAdapter()
+		{
+			@Override
+			public void mouseWheelMoved( MouseWheelEvent e )
+			{
+				//super.mouseWheelMoved( e );
+				mLastHidingOperation = LastHidingOperation.SUSPENDED;
+				hideWindow();
+			}
+		} );
 		mFrame.addKeyListener( new KeyAdapter()
 		{
 			@Override
@@ -133,9 +151,8 @@ public class ScreenshotWindow
 				//super.keyTyped( e );
 				if( e.getKeyCode() == KeyEvent.VK_ESCAPE )
 				{
-					//System.exit( 1 );
-					mFrame.setVisible(false);
-					mCapture = null;
+					mLastHidingOperation = LastHidingOperation.CLOSED;
+					hideWindow();
 					mParent.ScreenshotClosed();
 				}
 			}
@@ -143,6 +160,13 @@ public class ScreenshotWindow
 		// make the cursor a crosshair shape
 		//mFrame.setCursor(new Cursor(Cursor.CROSSHAIR_CURSOR));
 		mFrame.setCursor(new Cursor(Cursor.HAND_CURSOR));
+	}
+
+	private static void hideWindow()
+	{
+		//System.exit( 1 );
+		mFrame.setVisible(false);
+		mCapture = null;
 	}
 
 	public void Show( String activeDictionary )
@@ -162,5 +186,14 @@ public class ScreenshotWindow
 		mFrame.setVisible( true );
 		mFrame.toFront();
 		mFrame.repaint();
+	}
+
+	public void WakeUp()
+	{
+		if( !mFrame.isVisible() && mLastHidingOperation == LastHidingOperation.SUSPENDED )
+		{
+			ActivateLastDictionary();
+			mLastHidingOperation = LastHidingOperation.NOTHING;
+		}
 	}
 }

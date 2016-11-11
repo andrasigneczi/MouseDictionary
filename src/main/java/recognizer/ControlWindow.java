@@ -1,14 +1,18 @@
 package recognizer;
 
+import org.jnativehook.GlobalScreen;
+import org.jnativehook.NativeHookException;
+
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.event.*;
+
+import static com.sun.java.accessibility.util.AWTEventMonitor.addWindowListener;
 
 /**
  * Created by Andras on 07/11/2016.
  */
-public class ControlWindow
+public class ControlWindow implements WindowListener
 {
 	private static JPanel mContentPane;
 	private static JFrame mFrame;
@@ -104,6 +108,8 @@ public class ControlWindow
 		});
 		mContentPane.add( frbgButton );
 
+		mFrame.addWindowListener( this );
+
 		mFrame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 		mFrame.add(mContentPane, BorderLayout.CENTER);
 		mFrame.setSize(300, 300);
@@ -138,5 +144,66 @@ public class ControlWindow
 	{
 		if( mSceenshotWindow != null )
 			mSceenshotWindow.ActivateLastDictionary();
+	}
+
+	public void WakUpScreenshot()
+	{
+		if( mSceenshotWindow != null )
+			mSceenshotWindow.WakeUp();
+	}
+
+	@Override
+	public void windowOpened( WindowEvent e )
+	{
+		try
+		{
+			GlobalScreen.registerNativeHook();
+		}
+		catch( NativeHookException e1 )
+		{
+			e1.printStackTrace();
+		}
+	}
+
+	@Override
+	public void windowClosing( WindowEvent e )
+	{
+		try
+		{
+			GlobalScreen.unregisterNativeHook();
+		}
+		catch( NativeHookException e1 )
+		{
+			e1.printStackTrace();
+		}
+	}
+
+	@Override
+	public void windowClosed( WindowEvent e )
+	{
+	}
+
+	@Override
+	public void windowIconified( WindowEvent e )
+	{
+
+	}
+
+	@Override
+	public void windowDeiconified( WindowEvent e )
+	{
+
+	}
+
+	@Override
+	public void windowActivated( WindowEvent e )
+	{
+
+	}
+
+	@Override
+	public void windowDeactivated( WindowEvent e )
+	{
+
 	}
 }
