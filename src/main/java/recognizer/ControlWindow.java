@@ -150,6 +150,12 @@ public class ControlWindow implements WindowListener
 			mSceenshotWindow.ActivateLastDictionary();
 	}
 
+	public void TranslateClipboardContent()
+	{
+		if( mSceenshotWindow != null )
+			mSceenshotWindow.TranslateClipboardContent();
+	}
+
 	public void WakUpScreenshot()
 	{
 		if( mSceenshotWindow != null )

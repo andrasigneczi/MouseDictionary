@@ -29,6 +29,7 @@ class AlsXYMouseLabelComponent extends JComponent
 	private Rectangle mTranslatedRectangle = null;
 	private String mCapturedText = null;
 	private WordDetector mWordDetector = new WordDetector();
+	private String mClipboardText = null;
 
 	private int mX;
 	private int mY;
@@ -117,6 +118,12 @@ class AlsXYMouseLabelComponent extends JComponent
 	{
 		super.paintComponent(g);
 
+		if( mClipboardText != null )
+		{
+			DrawBubble( g, mClipboardText, new Rectangle( mX, mY, 0, 0) );
+			return;
+		}
+
 		mFocusedWordBorders = mWordDetector.DetectWordBorders( mX, mY, mCapture );
 		if( mFocusedWordBorders != null )
 			DrawRect( g, mFocusedWordBorders );
@@ -129,7 +136,12 @@ class AlsXYMouseLabelComponent extends JComponent
 				mTextSelectionHandler.paintSelected( g, mSelectedCharactersBorders, mCapture );
 
 				if( mSelectedCharactersBorders.equals( mTranslatedRectangle ) && mCapturedText != null )
-					DrawBubble( g, mCapturedText, mSelectedCharactersBorders );
+				{
+					Rectangle newRect = new Rectangle( mX, mY,
+							(int)mSelectedCharactersBorders.getWidth(),
+							(int)mSelectedCharactersBorders.getHeight());
+					DrawBubble( g, mCapturedText, newRect );
+				}
 			}
 		}
 		else
@@ -169,6 +181,7 @@ class AlsXYMouseLabelComponent extends JComponent
 
 			BufferedImage grayImage = ImageHelper.convertImageToGrayscale(image);
 			mCapturedText = mITesseract.doOCR( grayImage );
+			mClipboardText = null;
 			mTranslatedRectangle = rect;
 		}
 		catch( TesseractException e )
@@ -196,12 +209,19 @@ class AlsXYMouseLabelComponent extends JComponent
 		repaint();
 	}
 
+	public void TranslateFromClipboard( String text )
+	{
+		mClipboardText = text;
+		repaint();
+	}
+
 	public void ChangeCapturedImage( BufferedImage capture )
 	{
 		mCapture = capture;
 		mFocusedWordBorders = null;
 		mSelectedCharactersBorders = null;
 		mSelectionState = Selection.NONE;
+		mClipboardText = null;
 	}
 
 	public void setActiveDictionary( String activeDictionary )

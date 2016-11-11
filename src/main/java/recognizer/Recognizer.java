@@ -1,6 +1,9 @@
 package recognizer;
 
 import java.awt.*;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.ClipboardOwner;
+import java.awt.datatransfer.Transferable;
 import java.awt.event.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -31,7 +34,8 @@ import javax.swing.*;
  * Created by Andras on 04/11/2016.
  */
 public class Recognizer extends Thread
-		implements NativeKeyListener, NativeMouseMotionListener, NativeMouseWheelListener
+		implements NativeKeyListener, NativeMouseMotionListener, NativeMouseWheelListener,
+		ClipboardOwner
 {
 	private static ControlWindow controlWindow;
 	private long mLastAction = 0;
@@ -52,26 +56,16 @@ public class Recognizer extends Thread
 	public void nativeKeyPressed( NativeKeyEvent nativeKeyEvent )
 	{
 		saveTimeStamp();
-		if( nativeKeyEvent.getKeyCode() == NativeKeyEvent.VC_M
-				&& ( nativeKeyEvent.getModifiers() & NativeInputEvent.SHIFT_MASK ) != 0
-				&& ( nativeKeyEvent.getModifiers() & NativeInputEvent.ALT_MASK   ) != 0
-				&& ( nativeKeyEvent.getModifiers() & NativeInputEvent.CTRL_MASK  ) != 0 )
-				// NativeInputEvent.ALT_MASK
-			//NativeInputEvent.CTRL_MASK
+		if( ( nativeKeyEvent.getModifiers() & NativeInputEvent.SHIFT_MASK ) != 0
+			&& ( nativeKeyEvent.getModifiers() & NativeInputEvent.ALT_MASK   ) != 0
+			&& ( nativeKeyEvent.getModifiers() & NativeInputEvent.CTRL_MASK  ) != 0 )
 		{
-			controlWindow.ActivateLastDictionary();
+			if( nativeKeyEvent.getKeyCode() == NativeKeyEvent.VC_M )
+				controlWindow.ActivateLastDictionary();
+			else if( nativeKeyEvent.getKeyCode() == NativeKeyEvent.VC_V )
+				controlWindow.TranslateClipboardContent();
 		}
 
-		if (nativeKeyEvent.getKeyCode() == NativeKeyEvent.VC_ESCAPE) {
-//			try
-//			{
-//				GlobalScreen.unregisterNativeHook();
-//			}
-//			catch( NativeHookException e )
-//			{
-//				e.printStackTrace();
-//			}
-		}
 	}
 
 	@Override
@@ -124,5 +118,11 @@ public class Recognizer extends Thread
 	private void saveTimeStamp()
 	{
 		mLastAction = System.currentTimeMillis();
+	}
+
+	@Override
+	public void lostOwnership( Clipboard clipboard, Transferable contents )
+	{
+
 	}
 }

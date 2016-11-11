@@ -6,9 +6,14 @@ import net.sourceforge.tess4j.util.LoadLibs;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.Transferable;
+import java.awt.datatransfer.UnsupportedFlavorException;
 import java.awt.event.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.IOException;
 
 /**
  * Created by Andras on 07/11/2016.
@@ -149,12 +154,16 @@ public class ScreenshotWindow
 			@Override
 			public void keyPressed( KeyEvent e )
 			{
-				mLastHidingOperation = LastHidingOperation.SUSPENDED;
 				hideWindow();
 				//super.keyTyped( e );
 				if( e.getKeyCode() == KeyEvent.VK_ESCAPE )
 				{
 					mParent.ScreenshotClosed();
+					mLastHidingOperation = LastHidingOperation.CLOSED;
+				}
+				else
+				{
+					mLastHidingOperation = LastHidingOperation.SUSPENDED;
 				}
 			}
 		} );
@@ -172,6 +181,7 @@ public class ScreenshotWindow
 
 	public void Show( String activeDictionary )
 	{
+		mLastHidingOperation = LastHidingOperation.NOTHING;
 		mActiveDictionary = activeDictionary;
 		SaveScreen();
 		alsXYMouseLabel.ChangeCapturedImage( mCapture );
@@ -181,6 +191,7 @@ public class ScreenshotWindow
 
 	public void ActivateLastDictionary()
 	{
+		mLastHidingOperation = LastHidingOperation.NOTHING;
 		SaveScreen();
 		alsXYMouseLabel.ChangeCapturedImage( mCapture );
 		alsXYMouseLabel.setActiveDictionary( mActiveDictionary );
@@ -192,9 +203,32 @@ public class ScreenshotWindow
 	public void WakeUp()
 	{
 		if( !mFrame.isVisible() && mLastHidingOperation == LastHidingOperation.SUSPENDED )
-		{
 			ActivateLastDictionary();
-			mLastHidingOperation = LastHidingOperation.NOTHING;
+	}
+
+	public void TranslateClipboardContent()
+	{
+		if( !mFrame.isVisible())
+			ActivateLastDictionary();
+
+		String result = "";
+		Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+		//odd: the Object param of getContents is not currently used
+		Transferable contents = clipboard.getContents(null);
+		boolean hasTransferableText =
+				(contents != null) &&
+						contents.isDataFlavorSupported(DataFlavor.stringFlavor)
+				;
+		if (hasTransferableText) {
+			try {
+				result = (String)contents.getTransferData( DataFlavor.stringFlavor);
+			}
+			catch (UnsupportedFlavorException | IOException ex){
+				System.out.println(ex);
+				ex.printStackTrace();
+			}
 		}
+
+		alsXYMouseLabel.TranslateFromClipboard( result );
 	}
 }
