@@ -55,6 +55,7 @@ public class ScreenshotWindow
 
 		SaveScreen();
 
+		mFrame.setIconImage( Toolkit.getDefaultToolkit().getImage(getClass().getResource("/mouse.png")));
 		mFrame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 		mFrame.add(mContentPane, BorderLayout.CENTER);
 		mFrame.setSize(300, 175);

@@ -78,14 +78,12 @@ public class Recognizer extends Thread
 	public void nativeKeyReleased( NativeKeyEvent nativeKeyEvent )
 	{
 		saveTimeStamp();
-		System.out.println( "nativeKeyReleased");
 	}
 
 	@Override
 	public void nativeKeyTyped( NativeKeyEvent nativeKeyEvent )
 	{
 		saveTimeStamp();
-		System.out.println( "nativeKeyTyped");
 	}
 
 	@Override
@@ -98,14 +96,12 @@ public class Recognizer extends Thread
 	public void nativeMouseDragged( NativeMouseEvent nativeMouseEvent )
 	{
 		saveTimeStamp();
-		System.out.println( "nativeMouseDragged");
 	}
 
 	@Override
 	public void nativeMouseWheelMoved( NativeMouseWheelEvent nativeMouseWheelEvent )
 	{
 		saveTimeStamp();
-		System.out.println( "nativeMouseWheelMoved");
 	}
 
 	public void run()

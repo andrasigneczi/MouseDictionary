@@ -6,6 +6,9 @@ import org.jnativehook.NativeHookException;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.io.BufferedInputStream;
+import java.io.IOException;
+import java.util.Scanner;
 
 import static com.sun.java.accessibility.util.AWTEventMonitor.addWindowListener;
 
@@ -110,6 +113,7 @@ public class ControlWindow implements WindowListener
 
 		mFrame.addWindowListener( this );
 
+		mFrame.setIconImage( Toolkit.getDefaultToolkit().getImage(getClass().getResource("/mouse.png")));
 		mFrame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 		mFrame.add(mContentPane, BorderLayout.CENTER);
 		mFrame.setSize(300, 300);
