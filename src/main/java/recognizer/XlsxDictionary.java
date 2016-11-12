@@ -41,7 +41,19 @@ public class XlsxDictionary implements DictionaryIF
 	}
 
 	@Override
+	public boolean wasLastWordSaved()
+	{
+		return false;
+	}
+
+	@Override
 	public void modify( String key, String value )
+	{
+
+	}
+
+	@Override
+	public void save( String key, String value )
 	{
 
 	}
@@ -74,8 +86,7 @@ public class XlsxDictionary implements DictionaryIF
 		return result;
 	}
 
-	@Override
-	public void loadDictionary( String filename )
+	private void loadDictionary( String filename )
 	{
 		try
 		{

@@ -69,8 +69,17 @@ public class ScreenshotWindow
 		mFrame.setExtendedState(JFrame.MAXIMIZED_BOTH);
 		mFrame.setVisible(true);
 		InitBubble();
+		changeCursor();
 	}
 
+	private void changeCursor()
+	{
+		Toolkit toolkit = Toolkit.getDefaultToolkit();
+		Image image = toolkit.getImage(getClass().getResource("/cursor.gif"));
+		Cursor c = toolkit.createCustomCursor(image , new Point(mFrame.getX(),
+				mFrame.getY()), "img");
+		mFrame.setCursor (c);
+	}
 	private static void SaveScreen()
 	{
 		Rectangle screenRect = new Rectangle(Toolkit.getDefaultToolkit().getScreenSize());
@@ -123,7 +132,8 @@ public class ScreenshotWindow
 			public void mouseClicked( MouseEvent e )
 			{
 				//super.mouseClicked( e );
-				alsXYMouseLabel.Translate();
+				alsXYMouseLabel.mouseClicked(e);
+				//alsXYMouseLabel.Translate();
 			}
 
 			@Override
@@ -169,7 +179,7 @@ public class ScreenshotWindow
 		} );
 		// make the cursor a crosshair shape
 		//mFrame.setCursor(new Cursor(Cursor.CROSSHAIR_CURSOR));
-		mFrame.setCursor(new Cursor(Cursor.HAND_CURSOR));
+		//mFrame.setCursor(new Cursor(Cursor.HAND_CURSOR));
 	}
 
 	private static void hideWindow()

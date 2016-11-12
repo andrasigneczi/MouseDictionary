@@ -28,8 +28,10 @@ class AlsXYMouseLabelComponent extends JComponent
 	private Rectangle mSelectedCharactersBorders = null;
 	private Rectangle mTranslatedRectangle = null;
 	private String mCapturedText = null;
+	private String mTranslation = null;
 	private WordDetector mWordDetector = new WordDetector();
 	private String mClipboardText = null;
+	private boolean mWordSaved = true;
 
 	private int mX;
 	private int mY;
@@ -60,16 +62,15 @@ class AlsXYMouseLabelComponent extends JComponent
 		//return font.deriveFont(12f);
 	}
 
-	private void DrawBubble( Graphics g, String word, Rectangle rect )
+	private void DrawBubble( Graphics g, Rectangle rect )
 	{
-		String translation = mActiveDictionary.translate( word.trim());
 		g.setFont( mBubleFont );
 		int lWidth = 0;
 		int lHeight = 0;
 
 		//Rectangle2D r2d = g.getFontMetrics().getStringBounds( translation, 0, translation.length(), g );
 
-		String[] translationLines = translation.split("\n");
+		String[] translationLines = mTranslation.split("\n");
 		ArrayList<String> brokenLines = new ArrayList<>();
 		for (String line : translationLines)
 		{
@@ -95,14 +96,15 @@ class AlsXYMouseLabelComponent extends JComponent
 				lWidth = (int)r2d.getWidth();
 		}
 		g.setColor( Color.orange );
-		int y = (int)(rect.getY() + rect.getHeight());
-		g.fill3DRect( mX + 8, y, lWidth + 17, brokenLines.size() * lHeight + 12, true );
+		int y = (int)(rect.getY() + rect.getHeight()) + 10;
+		int x = mX + 38;
+		g.fill3DRect( x, y, lWidth + 17, brokenLines.size() * lHeight + 12, true );
 		g.setColor( Color.black );
 
 		//g.drawString( translation, mX + 16, y + (int)r2d.getHeight() + 3 );
 		int LineY = y + 3;
 		for (String line : brokenLines)
-			g.drawString(line, mX + 16, LineY += lHeight);
+			g.drawString(line, x + 12, LineY += lHeight);
 	}
 
 	private void DrawRect(Graphics g, Rectangle rect )
@@ -117,10 +119,15 @@ class AlsXYMouseLabelComponent extends JComponent
 	protected void paintComponent(Graphics g)
 	{
 		super.paintComponent(g);
+		if( !mWordSaved && mCapture != null )
+		{
+			g.drawImage( Toolkit.getDefaultToolkit().getImage(getClass().getResource("/save.png")),
+					mCapture.getWidth() - 50, 10, null );
+		}
 
 		if( mClipboardText != null )
 		{
-			DrawBubble( g, mClipboardText, new Rectangle( mX, mY, 0, 0) );
+			DrawBubble( g, new Rectangle( mX, mY, 0, 0) );
 			return;
 		}
 
@@ -140,7 +147,7 @@ class AlsXYMouseLabelComponent extends JComponent
 					Rectangle newRect = new Rectangle( mX, mY,
 							(int)mSelectedCharactersBorders.getWidth(),
 							(int)mSelectedCharactersBorders.getHeight());
-					DrawBubble( g, mCapturedText, newRect );
+					DrawBubble( g, newRect );
 				}
 			}
 		}
@@ -149,9 +156,11 @@ class AlsXYMouseLabelComponent extends JComponent
 			if( mFocusedWordBorders != null )
 			{
 				if( mFocusedWordBorders.equals( mTranslatedRectangle ) && mCapturedText != null )
-					DrawBubble( g, mCapturedText, mFocusedWordBorders );
+					DrawBubble( g, mFocusedWordBorders );
 			}
 		}
+
+		//g.drawString( "" + mX + ", " + mY, mX - 20, mY + 40 );
 	}
 
 	private void Capture( Rectangle rect )
@@ -180,7 +189,9 @@ class AlsXYMouseLabelComponent extends JComponent
 					(int)rect.getWidth(), (int)rect.getHeight());
 
 			BufferedImage grayImage = ImageHelper.convertImageToGrayscale(image);
-			mCapturedText = mITesseract.doOCR( grayImage );
+			mCapturedText = mITesseract.doOCR( grayImage ).trim();
+			mTranslation = mActiveDictionary.translate( mCapturedText );
+			mWordSaved = mActiveDictionary.wasLastWordSaved();
 			mClipboardText = null;
 			mTranslatedRectangle = rect;
 		}
@@ -279,6 +290,29 @@ class AlsXYMouseLabelComponent extends JComponent
 	{
 		mX = e.getX();
 		mY = e.getY();
+		repaint();
+	}
+
+	public void mouseClicked( MouseEvent  e)
+	{
+		if( mCapture == null )
+			return;
+
+
+		if( e.getX() > mCapture.getWidth() - 60 && e.getX() < mCapture.getWidth() - 28
+				&& e.getY() > 10 && e.getY() < 52 )
+		{
+			if( !mWordSaved && mCapturedText != null && mTranslation != null )
+			{
+				// TODO: save the word
+				mActiveDictionary.save( mCapturedText, mTranslation );
+				mWordSaved = true;
+			}
+		}
+		else
+		{
+			Translate();
+		}
 		repaint();
 	}
 }

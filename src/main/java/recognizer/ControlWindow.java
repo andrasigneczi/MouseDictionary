@@ -181,6 +181,7 @@ public class ControlWindow implements WindowListener
 		try
 		{
 			GlobalScreen.unregisterNativeHook();
+			DictionaryCache.ConnectionClose();
 		}
 		catch( NativeHookException e1 )
 		{

@@ -11,7 +11,6 @@ import com.google.cloud.translate.TranslateOptions;
 import com.google.common.collect.ImmutableList;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.json.JSONException;
-import org.json.JSONTokener;
 
 import java.io.*;
 import java.net.MalformedURLException;
@@ -26,10 +25,11 @@ import java.util.Scanner;
  */
 public class GoogleDictionary implements DictionaryIF
 {
-	private Hashtable<String,String> mWords = new Hashtable<>(  );
+	//private Hashtable<String,String> mWords = new Hashtable<>(  );
 	private String mSourceLanguage;
 	private String mTargetLanguage;
 	private static String mApiKey = null;
+	private boolean mItWasSaved = true;
 
 	public GoogleDictionary( String source, String target )
 	{
@@ -151,9 +151,13 @@ public class GoogleDictionary implements DictionaryIF
 
 	private String Trim( String word )
 	{
-		while( word.endsWith( "," ) || word.endsWith( ":" ) )
+		while( word.endsWith( "," ) || word.endsWith( ":" ) || word.endsWith( "(" ) || word.endsWith( ")" )  )
 		{
 			word = word.substring( 0, word.length() - 1 );
+		}
+		while( word.startsWith( "," ) || word.startsWith( ":" ) || word.startsWith( "(" ) || word.startsWith( ")" ))
+		{
+			word = word.substring( 1 );
 		}
 		return word;
 	}
@@ -165,9 +169,17 @@ public class GoogleDictionary implements DictionaryIF
 
 		//if(true) return translate3(word);
 
-		if( mWords.containsKey( word ))
-			return mWords.get( word );
+		String translation = DictionaryCache.getInstance()
+				.translate( mSourceLanguage, mTargetLanguage, word );
+		//if( mWords.containsKey( word ))
+		if( translation != null )
+		{
+			mItWasSaved = true;
+			return translation;
+		}
+		mItWasSaved = false;
 
+		System.out.println( "google translate: " + word );
 		try
 		{
 			//.setHttpReferrer(/* Enter the URL of your site here */);
@@ -180,14 +192,13 @@ public class GoogleDictionary implements DictionaryIF
 					.getService();
 
 
-			com.google.cloud.translate.Translation translation = translate.translate(
+			com.google.cloud.translate.Translation translationO = translate.translate(
 					word,
 					com.google.cloud.translate.Translate.TranslateOption.sourceLanguage(mSourceLanguage),
 					com.google.cloud.translate.Translate.TranslateOption.targetLanguage(mTargetLanguage)
 			);
 
-			mWords.put( word, StringEscapeUtils.unescapeHtml4( translation.getTranslatedText()));
-			return translation.getTranslatedText();
+			return translationO.getTranslatedText();
 		}
 		catch( Exception e )
 		{
@@ -197,19 +208,29 @@ public class GoogleDictionary implements DictionaryIF
 	}
 
 	@Override
+	public boolean wasLastWordSaved()
+	{
+		return mItWasSaved;
+	}
+
+	@Override
 	public void modify( String key, String value )
 	{
 
 	}
 
 	@Override
-	public void delete( String key )
+	public void save( String key, String value )
 	{
-
+		key = Trim( key.toLowerCase().trim());
+		System.out.println( "GoogleDictionary save: key: " + key + ", value:" + value );
+		//mWords.put( key, value);
+		DictionaryCache.getInstance().save( mSourceLanguage, mTargetLanguage, key, value );
+		mItWasSaved = true;
 	}
 
 	@Override
-	public void loadDictionary( String langToLang )
+	public void delete( String key )
 	{
 
 	}

@@ -46,19 +46,25 @@ public class DemoDictionary implements DictionaryIF
 	}
 
 	@Override
+	public boolean wasLastWordSaved()
+	{
+		return false;
+	}
+
+	@Override
 	public void modify( String key, String value )
 	{
 
 	}
 
 	@Override
-	public void delete( String key )
+	public void save( String key, String value )
 	{
 
 	}
 
 	@Override
-	public void loadDictionary( String langToLang )
+	public void delete( String key )
 	{
 
 	}

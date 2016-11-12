@@ -1,34 +1,18 @@
 package recognizer;
 
-import java.awt.*;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.ClipboardOwner;
 import java.awt.datatransfer.Transferable;
-import java.awt.event.*;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
-import java.security.Timestamp;
 import java.time.Duration;
-import java.time.LocalDateTime;
-import java.util.*;
+import java.util.logging.LogManager;
 
-import net.sourceforge.tess4j.*;
-import net.sourceforge.tess4j.util.ImageIOHelper;
-import net.sourceforge.tess4j.util.LoadLibs;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.jnativehook.GlobalScreen;
-import org.jnativehook.NativeHookException;
 import org.jnativehook.NativeInputEvent;
 import org.jnativehook.keyboard.NativeKeyEvent;
 import org.jnativehook.keyboard.NativeKeyListener;
 import org.jnativehook.mouse.*;
-import org.joda.time.DateTime;
-
-import javax.imageio.IIOImage;
-import javax.imageio.ImageIO;
-import javax.swing.*;
 
 /**
  * Created by Andras on 04/11/2016.
@@ -42,12 +26,26 @@ public class Recognizer extends Thread
 
 	public static void main( String args[] )
 	{
+		// Clear previous logging configurations.
+		LogManager.getLogManager().reset();
+
+		// Get the logger for "org.jnativehook" and set the level to off.
+		java.util.logging.Logger logger = java.util.logging.Logger.getLogger(GlobalScreen.class.getPackage().getName());
+		logger.setLevel(java.util.logging.Level.OFF);
+
 		controlWindow = new ControlWindow();
 		Recognizer lRecognizer = new Recognizer();
 		//GlobalScreen.registerNativeHook();
 		GlobalScreen.addNativeKeyListener(lRecognizer);
 		GlobalScreen.addNativeMouseWheelListener(lRecognizer);
 		GlobalScreen.addNativeMouseMotionListener(lRecognizer);
+
+		// Change the level for all handlers attached to the default logger.
+		java.util.logging.Handler[] handlers = java.util.logging.Logger.getLogger("").getHandlers();
+		for (int i = 0; i < handlers.length; i++) {
+			handlers[i].setLevel(java.util.logging.Level.OFF);
+		}
+
 		lRecognizer.start();
 		//lRecognizer.join();
 	}

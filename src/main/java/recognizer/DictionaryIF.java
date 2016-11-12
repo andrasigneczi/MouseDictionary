@@ -9,8 +9,9 @@ import java.net.URISyntaxException;
 public interface DictionaryIF
 {
 	String translate( String word );
+	boolean wasLastWordSaved();
 	void modify( String key, String value );
+	void save( String key, String value );
 	void delete( String key );
-	void loadDictionary( String langToLang );
 	String getSourceLanguage();
 }
