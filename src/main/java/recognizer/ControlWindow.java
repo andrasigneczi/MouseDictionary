@@ -22,7 +22,9 @@ public class ControlWindow implements WindowListener
 	private static JDialog mDialog;
 	private static JButton enghunButton;
 	private static JButton gerhunButton;
+	private static JButton gerengButton;
 	private static JButton frhunButton;
+	private static JButton frengButton;
 	private static JButton enbgButton;
 	private static JButton gerbgButton;
 	private static JButton frbgButton;
@@ -63,6 +65,27 @@ public class ControlWindow implements WindowListener
 			}
 		});
 		mContentPane.add( frhunButton );
+
+
+
+		gerengButton = new JButton("German => English");
+		gerengButton.addActionListener( new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				_ActionPerformed( e, "de-en" );
+			}
+		});
+		mContentPane.add( gerengButton );
+
+		frengButton = new JButton("French => English");
+		frengButton.addActionListener( new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				_ActionPerformed( e, "fr-en" );
+			}
+		});
+		mContentPane.add( frengButton );
+
 
 
 		bghuButton = new JButton("Bulgarian => Hungarian");

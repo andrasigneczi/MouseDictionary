@@ -151,11 +151,17 @@ public class GoogleDictionary implements DictionaryIF
 
 	private String Trim( String word )
 	{
-		while( word.endsWith( "," ) || word.endsWith( ":" ) || word.endsWith( "(" ) || word.endsWith( ")" )  )
+		while( word.endsWith( "," )
+				|| word.endsWith( ":" )
+				|| word.endsWith( "(" )
+				|| word.endsWith( ")" )  )
 		{
 			word = word.substring( 0, word.length() - 1 );
 		}
-		while( word.startsWith( "," ) || word.startsWith( ":" ) || word.startsWith( "(" ) || word.startsWith( ")" ))
+		while( word.startsWith( "," )
+				|| word.startsWith( ":" )
+				|| word.startsWith( "(" )
+				|| word.startsWith( ")" ))
 		{
 			word = word.substring( 1 );
 		}

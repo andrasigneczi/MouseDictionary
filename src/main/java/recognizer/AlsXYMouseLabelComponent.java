@@ -223,6 +223,8 @@ class AlsXYMouseLabelComponent extends JComponent
 	public void TranslateFromClipboard( String text )
 	{
 		mClipboardText = text;
+		mTranslation = mActiveDictionary.translate( mClipboardText );
+		mWordSaved = mActiveDictionary.wasLastWordSaved();
 		repaint();
 	}
 
