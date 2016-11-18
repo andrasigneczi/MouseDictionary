@@ -151,19 +151,14 @@ public class GoogleDictionary implements DictionaryIF
 
 	private String Trim( String word )
 	{
-		while( word.endsWith( "," )
-				|| word.endsWith( ":" )
-				|| word.endsWith( "(" )
-				|| word.endsWith( ")" )  )
+		String[] trimChars = { ",", ":", "(", ")", "[", "]", "@", "{", "}", "&", "_", "-" };
+		for( int i = 0; i < trimChars.length; i++ )
 		{
-			word = word.substring( 0, word.length() - 1 );
-		}
-		while( word.startsWith( "," )
-				|| word.startsWith( ":" )
-				|| word.startsWith( "(" )
-				|| word.startsWith( ")" ))
-		{
-			word = word.substring( 1 );
+			while( word.endsWith( trimChars[i] ))
+				word = word.substring( 0, word.length() - 1 );
+
+			while( word.startsWith( trimChars[i] ))
+				word = word.substring( 1 );
 		}
 		return word;
 	}
@@ -171,7 +166,7 @@ public class GoogleDictionary implements DictionaryIF
 	@Override
 	public String translate( String word )
 	{
-		word = Trim( word.toLowerCase().trim());
+		word = Trim( word.trim());
 
 		//if(true) return translate3(word);
 
