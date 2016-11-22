@@ -304,17 +304,27 @@ class AlsXYMouseLabelComponent extends JComponent
 		if( e.getX() > mCapture.getWidth() - 60 && e.getX() < mCapture.getWidth() - 28
 				&& e.getY() > 10 && e.getY() < 52 )
 		{
-			if( !mWordSaved && mCapturedText != null && mTranslation != null )
-			{
-				// TODO: save the word
-				mActiveDictionary.save( mCapturedText, mTranslation );
-				mWordSaved = true;
-			}
+			saveTranslation();
 		}
 		else
 		{
 			Translate();
+			repaint();
 		}
-		repaint();
+	}
+
+	public void saveTranslation()
+	{
+		if( !mWordSaved && mCapturedText != null && mTranslation != null )
+		{
+			mActiveDictionary.save( mCapturedText, mTranslation );
+			mWordSaved = true;
+			repaint();
+		}
+	}
+
+	public String getSelectedText()
+	{
+		return mCapturedText;
 	}
 }

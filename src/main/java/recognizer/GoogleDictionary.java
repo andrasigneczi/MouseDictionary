@@ -151,7 +151,7 @@ public class GoogleDictionary implements DictionaryIF
 
 	private String Trim( String word )
 	{
-		String[] trimChars = { ",", ":", "(", ")", "[", "]", "@", "{", "}", "&", "_", "-" };
+		String[] trimChars = { ",", ":", "(", ")", "[", "]", "@", "{", "}", "&", "_", "-", "/", "%" };
 		for( int i = 0; i < trimChars.length; i++ )
 		{
 			while( word.endsWith( trimChars[i] ))

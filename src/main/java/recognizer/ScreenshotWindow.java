@@ -3,13 +3,11 @@ package recognizer;
 import net.sourceforge.tess4j.ITesseract;
 import net.sourceforge.tess4j.Tesseract1;
 import net.sourceforge.tess4j.util.LoadLibs;
+import org.jnativehook.NativeInputEvent;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.datatransfer.Clipboard;
-import java.awt.datatransfer.DataFlavor;
-import java.awt.datatransfer.Transferable;
-import java.awt.datatransfer.UnsupportedFlavorException;
+import java.awt.datatransfer.*;
 import java.awt.event.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -164,6 +162,18 @@ public class ScreenshotWindow
 			@Override
 			public void keyPressed( KeyEvent e )
 			{
+				if( (e.getModifiers() & KeyEvent.CTRL_MASK  ) != 0)
+				{
+					if( e.getKeyCode() == KeyEvent.VK_S )
+					{
+						alsXYMouseLabel.saveTranslation();
+					} else if( e.getKeyCode() == KeyEvent.VK_C )
+					{
+						copyToClipboard( alsXYMouseLabel.getSelectedText());
+					}
+					return;
+				}
+
 				hideWindow();
 				//super.keyTyped( e );
 				if( e.getKeyCode() == KeyEvent.VK_ESCAPE )
@@ -240,5 +250,15 @@ public class ScreenshotWindow
 		}
 
 		alsXYMouseLabel.TranslateFromClipboard( result );
+	}
+
+	public static void copyToClipboard( String text )
+	{
+		if( text == null )
+			return;
+		
+		StringSelection stringSelection = new StringSelection(text);
+		Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+		clipboard.setContents(stringSelection, null );
 	}
 }
