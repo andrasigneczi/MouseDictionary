@@ -256,7 +256,7 @@ public class ScreenshotWindow
 	{
 		if( text == null )
 			return;
-		
+
 		StringSelection stringSelection = new StringSelection(text);
 		Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
 		clipboard.setContents(stringSelection, null );
