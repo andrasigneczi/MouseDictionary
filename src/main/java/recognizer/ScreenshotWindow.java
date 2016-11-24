@@ -37,12 +37,12 @@ public class ScreenshotWindow
 
 	private static LastHidingOperation mLastHidingOperation = LastHidingOperation.CLOSED;
 
-	public ScreenshotWindow( ControlWindow p, String activeDirectory )
+	public ScreenshotWindow( ControlWindow p, String activeDictionary )
 	{
 		mParent = p;
 		mFrame = new JFrame("MouseDict");
 		mDialog = new JDialog(mFrame, true);
-		mActiveDictionary = activeDirectory;
+		mActiveDictionary = activeDictionary;
 
 		mContentPane = new JPanel() {
 			@Override

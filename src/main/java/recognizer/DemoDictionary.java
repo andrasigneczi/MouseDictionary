@@ -74,4 +74,10 @@ public class DemoDictionary implements DictionaryIF
 	{
 		return "eng";
 	}
+
+	@Override
+	public String getLastDetectedLanguage()
+	{
+		return null;
+	}
 }

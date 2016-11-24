@@ -122,4 +122,10 @@ public class XlsxDictionary implements DictionaryIF
 	{
 		return "eng";
 	}
+
+	@Override
+	public String getLastDetectedLanguage()
+	{
+		return null;
+	}
 }

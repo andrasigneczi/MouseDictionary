@@ -53,7 +53,7 @@ public class ControlWindow implements WindowListener, ActionListener
 		JRadioButton buttonFra1  = new JRadioButton( "French" );
 		JRadioButton buttonBul1  = new JRadioButton( "Bulgarian" );
 		JRadioButton buttonHun1  = new JRadioButton( "Hungarian" );
-		JRadioButton buttonAuto  = new JRadioButton( "Detect" );
+		JRadioButton buttonAuto  = new JRadioButton( "Autod Detect" );
 
 		JLabel label2 = new JLabel( "To" );
 		JRadioButton buttonEng2  = new JRadioButton( "English" );
@@ -152,7 +152,7 @@ public class ControlWindow implements WindowListener, ActionListener
 		buttonFra1.setActionCommand( "fr1" );
 		buttonBul1.setActionCommand( "bg1" );
 		buttonHun1.setActionCommand( "hu1" );
-		buttonAuto.setActionCommand( "Auto" );
+		buttonAuto.setActionCommand( "auto" );
 		buttonEng2.setActionCommand( "en2" );
 		buttonGer2.setActionCommand( "de2" );
 		buttonFra2.setActionCommand( "fr2" );
@@ -164,12 +164,12 @@ public class ControlWindow implements WindowListener, ActionListener
 		mFrame.setIconImage( Toolkit.getDefaultToolkit().getImage(getClass().getResource("/mouse.png")));
 		mFrame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 		mFrame.add(mContentPane, BorderLayout.CENTER);
-		mFrame.setSize(300, 300);
+		mFrame.setSize(300, 260);
 		mFrame.setLocationRelativeTo(null);
 		mFrame.setVisible(true);
 	}
 
-	public void _ActionPerformed(ActionEvent e, String activeDirectory )
+	public void _ActionPerformed(ActionEvent e, String activeDictionary )
 	{
 		mFrame.setVisible( false );
 		try
@@ -181,9 +181,9 @@ public class ControlWindow implements WindowListener, ActionListener
 			e1.printStackTrace();
 		}
 		if( mSceenshotWindow == null )
-			mSceenshotWindow = new ScreenshotWindow( this, activeDirectory );
+			mSceenshotWindow = new ScreenshotWindow( this, activeDictionary );
 		else
-			mSceenshotWindow.Show( activeDirectory );
+			mSceenshotWindow.Show( activeDictionary );
 	}
 
 	public void ScreenshotClosed()
@@ -271,10 +271,9 @@ public class ControlWindow implements WindowListener, ActionListener
 		if( e.getActionCommand() == "START" ) {
 			if( mTargetLanguage != null && mSourceLanguage != null )
 				_ActionPerformed( e, mSourceLanguage + "-" + mTargetLanguage );
-		} else if( e.getActionCommand() == "Auto" || e.getActionCommand().endsWith( "1" )) {
-			if( e.getActionCommand() == "Auto" )
+		} else if( e.getActionCommand().equalsIgnoreCase( "Auto" )) {
 				mSourceLanguage = e.getActionCommand();
-			else
+		} else if( e.getActionCommand().endsWith( "1" )) {
 				mSourceLanguage = e.getActionCommand().substring( 0, e.getActionCommand().length() - 1 );
 		} else if( e.getActionCommand().endsWith( "2" )) {
 			mTargetLanguage = e.getActionCommand().substring( 0, e.getActionCommand().length() - 1 );

@@ -14,4 +14,5 @@ public interface DictionaryIF
 	void save( String key, String value );
 	void delete( String key );
 	String getSourceLanguage();
+	String getLastDetectedLanguage();
 }

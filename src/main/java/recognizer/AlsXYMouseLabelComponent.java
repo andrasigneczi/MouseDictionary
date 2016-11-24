@@ -170,6 +170,12 @@ class AlsXYMouseLabelComponent extends JComponent
 			if( mActiveDictionary != null )
 			{
 				String lang = mActiveDictionary.getSourceLanguage();
+				if( lang.equalsIgnoreCase( "Auto" ))
+					lang = mActiveDictionary.getLastDetectedLanguage();
+
+				if( lang == null )
+					lang = "en";
+
 				if( lang.equalsIgnoreCase( "en" ))
 					mITesseract.setLanguage( "eng" );
 				else if( lang.equalsIgnoreCase( "hu" ))
