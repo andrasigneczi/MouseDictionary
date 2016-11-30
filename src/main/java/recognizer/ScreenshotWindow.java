@@ -170,6 +170,8 @@ public class ScreenshotWindow
 					} else if( e.getKeyCode() == KeyEvent.VK_C )
 					{
 						copyToClipboard( alsXYMouseLabel.getSelectedText());
+					} else if( e.getKeyCode() == KeyEvent.VK_P ) {
+						TTS.play( alsXYMouseLabel.getSelectedText() );
 					}
 					return;
 				}
